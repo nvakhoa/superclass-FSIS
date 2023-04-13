@@ -1,0 +1,730 @@
+CUDNN_BENCHMARK: false
+DATALOADER:
+  ASPECT_RATIO_GROUPING: true
+  FILTER_EMPTY_ANNOTATIONS: true
+  NUM_WORKERS: 0
+  REPEAT_THRESHOLD: 0.0
+  SAMPLER_TRAIN: TrainingSampler
+DATASETS:
+  PRECOMPUTED_PROPOSAL_TOPK_TEST: 1000
+  PRECOMPUTED_PROPOSAL_TOPK_TRAIN: 2000
+  PROPOSAL_FILES_TEST: []
+  PROPOSAL_FILES_TRAIN: []
+  TEST:
+  - coco_test_all
+  TEST_NUMBER: 0
+  TRAIN:
+  - coco_trainval_all_10shot
+  TRAIN_NUMBER: 0
+GLOBAL:
+  HACK: 1.0
+INPUT:
+  CROP:
+    ENABLED: true
+    SIZE:
+    - 0.9
+    - 0.9
+    TYPE: relative_range
+  CROP_BBX:
+    ENABLED: false
+    PROB: 0.5
+  EXAMPLES_PER_SHOT: 1
+  FORMAT: BGR
+  MASK_FORMAT: polygon
+  MAX_SIZE_TEST: 1333
+  MAX_SIZE_TRAIN: 1333
+  MIN_SIZE_TEST: 800
+  MIN_SIZE_TRAIN:
+  - 640
+  - 672
+  - 704
+  - 736
+  - 768
+  - 800
+  MIN_SIZE_TRAIN_SAMPLING: choice
+  NORMALIZE_SHOTS: true
+  USE_TRANSFORM_METRIC_AVERAGING: false
+MODEL:
+  ANCHOR_GENERATOR:
+    ANGLES:
+    - - -90
+      - 0
+      - 90
+    ASPECT_RATIOS:
+    - - 0.5
+      - 1.0
+      - 2.0
+    NAME: DefaultAnchorGenerator
+    OFFSET: 0.0
+    SIZES:
+    - - 32
+    - - 64
+    - - 128
+    - - 256
+    - - 512
+  ASPP:
+    CHANNELS: 256
+    DILATIONS:
+    - 6
+    - 12
+    - 18
+    DROPOUT: 0.1
+    FREEZE: 0
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    - p6
+    NORM: ''
+    OUT_FEATURES:
+    - a2
+    POOL_SIZE:
+    - 3
+    - 3
+    TRAINING: true
+    TYPE: 1
+    USE_ATTENTION: false
+    USE_DEPTHWISE_SEPARABLE: false
+  BACKBONE:
+    FREEZE: true
+    FREEZE_AT: 2
+    NAME: build_resnet_fpn_backbone
+  DEVICE: cuda
+  FPN:
+    FUSE_TYPE: sum
+    IN_FEATURES:
+    - res2
+    - res3
+    - res4
+    - res5
+    NORM: ''
+    OUT_CHANNELS: 256
+  GT_TEST_PROPOSALS: false
+  KEYPOINT_ON: false
+  LOAD_PROPOSALS: false
+  MARGIN_LOSS: false
+  MASK_ON: true
+  META_ARCHITECTURE: GeneralizedRCNN
+  NOVELSHAPE_ATT: false
+  PANOPTIC_FPN:
+    COMBINE:
+      ENABLED: true
+      INSTANCES_CONFIDENCE_THRESH: 0.5
+      OVERLAP_THRESH: 0.5
+      STUFF_AREA_LIMIT: 4096
+    INSTANCE_LOSS_WEIGHT: 1.0
+  PIXEL_MEAN:
+  - 103.53
+  - 116.28
+  - 123.675
+  PIXEL_STD:
+  - 1.0
+  - 1.0
+  - 1.0
+  PROPOSAL_GENERATOR:
+    FREEZE: true
+    FREEZE_TYPE: 0
+    MIN_SIZE: 0
+    NAME: RPN
+  REFINE:
+    FREEZE: false
+  RESNETS:
+    DEFORM_MODULATED: false
+    DEFORM_NUM_GROUPS: 1
+    DEFORM_ON_PER_STAGE:
+    - false
+    - false
+    - false
+    - false
+    DEPTH: 101
+    NORM: FrozenBN
+    NUM_GROUPS: 1
+    OUT_FEATURES:
+    - res2
+    - res3
+    - res4
+    - res5
+    RES2_OUT_CHANNELS: 256
+    RES5_DILATION: 1
+    STEM_OUT_CHANNELS: 64
+    STRIDE_IN_1X1: true
+    WIDTH_PER_GROUP: 64
+  RETINANET:
+    BBOX_REG_WEIGHTS:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    FOCAL_LOSS_ALPHA: 0.25
+    FOCAL_LOSS_GAMMA: 2.0
+    IN_FEATURES:
+    - p3
+    - p4
+    - p5
+    - p6
+    - p7
+    IOU_LABELS:
+    - 0
+    - -1
+    - 1
+    IOU_THRESHOLDS:
+    - 0.4
+    - 0.5
+    NMS_THRESH_TEST: 0.5
+    NUM_CLASSES: 80
+    NUM_CONVS: 4
+    PRIOR_PROB: 0.01
+    SCORE_THRESH_TEST: 0.05
+    SMOOTH_L1_LOSS_BETA: 0.1
+    TOPK_CANDIDATES_TEST: 1000
+  ROI_BOX_CASCADE_HEAD:
+    BBOX_REG_WEIGHTS:
+    - - 10.0
+      - 10.0
+      - 5.0
+      - 5.0
+    - - 20.0
+      - 20.0
+      - 10.0
+      - 10.0
+    - - 30.0
+      - 30.0
+      - 15.0
+      - 15.0
+    IOUS:
+    - 0.5
+    - 0.6
+    - 0.7
+  ROI_BOX_HEAD:
+    BBOX_REG_WEIGHTS:
+    - 10.0
+    - 10.0
+    - 5.0
+    - 5.0
+    CLS_AGNOSTIC_BBOX_REG: false
+    CONV_DIM: 256
+    DROPOUT: false
+    FC_DIM: 1024
+    NAME: FastRCNNConvFCHead
+    NORM: ''
+    NUM_CONV: 0
+    NUM_FC: 2
+    POOLER_RESOLUTION: 7
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+    SMOOTH_L1_BETA: 0.0
+    TRAIN_ON_PRED_BOXES: false
+  ROI_HEADS:
+    ALPHA_WEIGHTING: 1.0
+    BATCH_SIZE_PER_IMAGE: 512
+    COSINE_SCALE: 20.0
+    FEAT_PATH: variances/mean_var_box_feat_mask_feat_5shot_coco_trainval_base.pth
+    FREEZE_BOX_HEAD: true
+    FREEZE_BOX_PREDICTOR_CLS_SCORE: false
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    IOU_LABELS:
+    - 0
+    - 1
+    IOU_THRESHOLDS:
+    - 0.5
+    IS_FEAT_AUG: false
+    IS_MULTI_SUPER_CLS: true
+    IS_SUPER_AUG: false
+    MARGIN_LOSS_WEIGHT: -1.0
+    NAME: StandardSuperClassROIHead
+    NMS_THRESH_TEST: 0.5
+    NUM_CLASSES: 80
+    OUTPUT_LAYER: SMS_LR
+    POSITIVE_FRACTION: 0.25
+    PROPOSAL_APPEND_GT: true
+    SCORE_THRESH_TEST: 0.05
+    SIMILAR_BASE_LOSS_WEIGHT: -1.0
+    SUPER_CLASS:
+    - - 7
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 8
+      - 17
+      - 18
+      - 19
+      - 56
+      - 62
+    - - 9
+      - 2
+      - 4
+      - 6
+      - 62
+    - - 10
+      - 1
+      - 2
+      - 3
+      - 14
+      - 18
+      - 19
+      - 58
+    - - 11
+      - 2
+      - 4
+      - 5
+      - 6
+    - - 12
+      - 2
+      - 3
+      - 5
+      - 6
+    - - 13
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 8
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 56
+      - 57
+      - 58
+      - 60
+      - 62
+    - - 20
+      - 0
+      - 1
+      - 2
+      - 3
+      - 5
+      - 6
+      - 8
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 58
+    - - 21
+      - 0
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+    - - 22
+      - 8
+      - 14
+      - 16
+      - 17
+      - 18
+      - 19
+    - - 23
+      - 4
+      - 14
+      - 16
+      - 17
+      - 18
+      - 19
+      - 58
+    - - 24
+      - 0
+      - 1
+      - 2
+      - 3
+      - 5
+      - 15
+      - 16
+      - 17
+      - 19
+      - 56
+      - 57
+      - 58
+    - - 25
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 8
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 56
+      - 57
+      - 58
+    - - 26
+      - 0
+      - 1
+      - 2
+      - 3
+      - 8
+      - 14
+      - 15
+      - 16
+      - 17
+      - 19
+      - 39
+      - 56
+      - 57
+      - 58
+      - 60
+    - - 27
+      - 57
+    - - 28
+      - 1
+      - 2
+      - 3
+      - 5
+      - 8
+      - 15
+      - 16
+      - 56
+      - 57
+      - 62
+    - - 29
+      - 8
+      - 14
+      - 17
+      - 18
+      - 19
+    - - 30
+      - 1
+      - 3
+      - 4
+      - 6
+    - - 31
+      - 1
+      - 3
+      - 4
+    - - 32
+      - 2
+      - 19
+    - - 33
+      - 1
+      - 4
+      - 5
+      - 6
+      - 8
+      - 14
+      - 17
+      - 18
+      - 19
+    - - 34
+      - 0
+      - 4
+      - 14
+      - 18
+    - - 35
+      - 17
+      - 18
+      - 19
+    - - 36
+      - 1
+      - 2
+      - 3
+      - 4
+      - 14
+    - - 37
+      - 0
+      - 1
+      - 3
+      - 4
+      - 5
+      - 6
+      - 8
+      - 14
+      - 17
+      - 18
+      - 56
+    - - 38
+      - 4
+    - - 40
+      - 39
+    - - 41
+      - 39
+      - 58
+    - - 42
+      - 60
+    - - 43
+      - 39
+      - 60
+    - - 44
+      - 39
+      - 60
+    - - 45
+      - 8
+      - 15
+      - 39
+      - 58
+      - 60
+    - - 46
+      - 14
+      - 17
+      - 58
+      - 60
+    - - 47
+      - 58
+    - - 48
+      - 60
+    - - 50
+      - 58
+    - - 52
+      - 60
+    - - 53
+      - 60
+    - - 55
+      - 39
+      - 60
+    - - 59
+      - 0
+      - 1
+      - 2
+      - 5
+      - 6
+      - 8
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 56
+      - 57
+      - 60
+      - 62
+    - - 61
+      - 0
+      - 1
+      - 3
+      - 8
+      - 15
+      - 16
+      - 56
+      - 57
+      - 58
+      - 62
+    - - 63
+      - 15
+      - 16
+      - 56
+      - 57
+      - 62
+    - - 65
+      - 39
+    - - 66
+      - 62
+    - - 67
+      - 39
+      - 62
+    - - 68
+      - 5
+      - 6
+      - 62
+    - - 69
+      - 2
+      - 5
+      - 6
+      - 56
+      - 57
+      - 60
+      - 62
+    - - 70
+      - 39
+    - - 71
+      - 0
+      - 8
+      - 16
+      - 56
+      - 57
+      - 60
+    - - 72
+      - 0
+      - 5
+      - 6
+      - 16
+      - 56
+      - 57
+      - 62
+    - - 73
+      - 8
+      - 15
+      - 39
+      - 56
+      - 57
+      - 60
+      - 62
+    - - 74
+      - 4
+      - 5
+      - 6
+      - 39
+      - 62
+    - - 75
+      - 14
+      - 15
+      - 39
+      - 56
+      - 57
+      - 58
+    - - 76
+      - 4
+    - - 77
+      - 0
+      - 3
+      - 15
+      - 16
+      - 18
+      - 19
+      - 57
+      - 58
+    - - 78
+      - 0
+      - 15
+      - 39
+      - 62
+    - - 79
+      - 39
+    - - 49
+      - 51
+      - 54
+      - 64
+      - 80
+    TOP_K: 15
+    USE_FINE_GRAINED_CLS_ACTI: false
+    USE_SUPER_CLS_ACTI: false
+  ROI_KEYPOINT_HEAD:
+    CONV_DIMS:
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    - 512
+    LOSS_WEIGHT: 1.0
+    MIN_KEYPOINTS_PER_IMAGE: 1
+    NAME: KRCNNConvDeconvUpsampleHead
+    NORMALIZE_LOSS_BY_VISIBLE_KEYPOINTS: true
+    NUM_KEYPOINTS: 17
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+  ROI_MASK_HEAD:
+    CLS_AGNOSTIC_MASK: false
+    CONV_DIM: 256
+    FREEZE: false
+    FREEZE_WITHOUT_PREDICTOR: true
+    NAME: MaskRCNNConvUpsampleHead
+    NORM: ''
+    NUM_CONV: 4
+    POOLER_RESOLUTION: 14
+    POOLER_SAMPLING_RATIO: 0
+    POOLER_TYPE: ROIAlignV2
+  RPN:
+    BATCH_SIZE_PER_IMAGE: 256
+    BBOX_REG_WEIGHTS:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    BOUNDARY_THRESH: -1
+    HEAD_NAME: StandardRPNHead
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    - p6
+    IOU_LABELS:
+    - 0
+    - -1
+    - 1
+    IOU_THRESHOLDS:
+    - 0.3
+    - 0.7
+    LOSS_WEIGHT: 1.0
+    NMS_THRESH: 0.7
+    POSITIVE_FRACTION: 0.5
+    POST_NMS_TOPK_TEST: 1000
+    POST_NMS_TOPK_TRAIN: 1000
+    PRE_NMS_TOPK_TEST: 1000
+    PRE_NMS_TOPK_TRAIN: 2000
+    SMOOTH_L1_BETA: 0.0
+  SEM_SEG_HEAD:
+    COMMON_STRIDE: 4
+    CONVS_DIM: 128
+    IGNORE_VALUE: 255
+    IN_FEATURES:
+    - p2
+    - p3
+    - p4
+    - p5
+    LOSS_WEIGHT: 1.0
+    NAME: SemSegFPNHead
+    NORM: GN
+    NUM_CLASSES: 54
+  WEIGHTS: checkpoints/a_main_result_8k_final/all_10_SMS_10shot/model_final.pth
+OUTPUT_DIR: checkpoints/a_main_result_8k_final/all_10_SMS_10shot
+SEED: -1
+SOLVER:
+  BASE_LR: 0.01
+  BIAS_LR_FACTOR: 1.0
+  CHECKPOINT_PERIOD: 50000
+  GAMMA: 0.1
+  IMS_PER_BATCH: 16
+  LR_SCHEDULER_NAME: WarmupMultiStepLR
+  MAX_ITER: 8000
+  MOMENTUM: 0.9
+  STEPS:
+  - 10000000
+  WARMUP_FACTOR: 0.001
+  WARMUP_ITERS: 500
+  WARMUP_METHOD: linear
+  WEIGHT_DECAY: 0.0001
+  WEIGHT_DECAY_BIAS: 0.0001
+  WEIGHT_DECAY_NORM: 0.0
+TEST:
+  AUG:
+    ENABLED: false
+    FLIP: true
+    MAX_SIZE: 4000
+    MIN_SIZES:
+    - 400
+    - 500
+    - 600
+    - 700
+    - 800
+    - 900
+    - 1000
+    - 1100
+    - 1200
+  DETECTIONS_PER_IMAGE: 100
+  EVAL_METHOD: default
+  EVAL_METHOD_WAYS: 1
+  EVAL_PERIOD: 2000
+  EXPECTED_RESULTS: []
+  KEYPOINT_OKS_SIGMAS: []
+  MODEL_METHOD: default
+  PRECISE_BN:
+    ENABLED: false
+    NUM_ITER: 200
+VERSION: 2
+VIS_PERIOD: 0

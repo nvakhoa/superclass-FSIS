@@ -1,0 +1,32 @@
+_BASE_: "../Base-RCNN-FPN.yaml"
+MODEL:
+  WEIGHTS: "checkpoints/coco/base_model/model_final.pth"
+  BACKBONE:
+    FREEZE: true
+  MASK_ON: true
+  PROPOSAL_GENERATOR:
+    FREEZE: true
+  RESNETS:
+    DEPTH: 101
+  ROI_HEADS:
+    FREEZE_BOX_HEAD: True
+    NUM_CLASSES: 80
+    IS_MULTI_SUPER_CLS: True
+    TOP_K: 15
+  ROI_MASK_HEAD:
+    FREEZE_WITHOUT_PREDICTOR: true
+DATASETS:
+  TRAIN: ('coco_trainval_all_1shot',)
+  TEST: ('coco_test_all',)
+SOLVER:
+    IMS_PER_BATCH: 16
+    BASE_LR: 0.01
+    STEPS: (10000000,)
+    MAX_ITER: 8000
+    CHECKPOINT_PERIOD: 500
+    WARMUP_ITERS: 500
+OUTPUT_DIR: "checkpoints/coco/superclass"
+INPUT:
+  CROP:
+    ENABLED: True
+  NORMALIZE_SHOTS: True

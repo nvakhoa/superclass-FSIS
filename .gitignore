@@ -1,0 +1,11 @@
+datasets/coco
+datasets/cocosplit
+datasets/cocosplit.zip
+datasets/*.zip
+detectron2/model_zoo/configsdebug.log
+bash/test.sh
+bash/create_env.sh
+weights
+checkpoints
+__pycache__/
+*.egg-info/
